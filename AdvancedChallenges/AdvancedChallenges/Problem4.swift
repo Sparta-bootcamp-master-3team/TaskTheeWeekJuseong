@@ -51,22 +51,31 @@ private class ElectricCar: Car {
     }
 }
 
-private enum EngineSwitchError: Error {
-    case sameEngineType
-}
-
 private class HybridCar: Car {
     init(brand: String, model: String, year: String, engine: HydrogenEngine) {
         super.init(brand: brand, model: model, year: year, engine: engine)
     }
     
     func switchEngine(to newEngine: Engine) throws {
-        if self.engine.engineType == newEngine.engineType {
+        guard self.engine.engineType != newEngine.engineType else {
             throw EngineSwitchError.sameEngineType
-        } else {
-            print("엔진 변경 성공: \(self.engine.engineType) -> \(newEngine.engineType)")
-            self.engine = newEngine
         }
+        
+        print("엔진 변경 성공: \(self.engine.engineType) -> \(newEngine.engineType)")
+        self.engine = newEngine
+    }
+}
+
+// MARK: 에러 정의
+private enum EngineSwitchError: Error {
+    case sameEngineType
+}
+
+private func hybridCarEngineSwitching(of hybridCar: HybridCar, to engine: Engine) {
+    do {
+        try hybridCar.switchEngine(to: engine)
+    } catch {
+        print("엔진 변경 실패: 변경할 엔진(\(engine.engineType))이 같습니다.")
     }
 }
 
@@ -79,14 +88,6 @@ func problem4Result() {
     hybridCarEngineSwitching(of: hybridCar, to: HydrogenEngine())
     hybridCarEngineSwitching(of: hybridCar, to: ElectricEngine())
     print("변경 후 엔진 - \(hybridCar.engine.engineType)")
-}
-
-private func hybridCarEngineSwitching(of hybridCar: HybridCar, to engine: Engine) {
-    do {
-        try hybridCar.switchEngine(to: engine)
-    } catch {
-        print("엔진 변경 실패: 변경할 엔진이 같습니다.")
-    }
 }
 
 // MARK: 상속과 프로토콜
